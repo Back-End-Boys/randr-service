@@ -1,9 +1,34 @@
 const pool = require('../database/index.js');
+const models = require('../database/models.js');
 
 const getReviews = (request, response) => {
   console.log(request.query);
-  pool.query(`SELECT * FROM reviews WHERE product_id = ${request.query.product_id}`)
-    .then(data => {console.log(data.rows); response.send('Get reviews');})
+  models.reviewsQuery(request.query.product_id)
+    .then(data => {
+      const formatReviews = data.rows.reduce((acc, { review_id, rating, summary, recommend, response, body, date, reviewer_name, helpfulness, photo_id, url }) => {
+        acc[review_id] ? null :
+          acc[review_id] = {
+            review_id,
+            rating,
+            summary,
+            body,
+            recommend,
+            reviewer_name,
+            date,
+            response,
+            helpfulness,
+            photos: []
+          };
+        photo_id ? acc[review_id].photos.push({ id: photo_id, url }) : null;
+        return acc;
+      }, {});
+
+      const responseObject = {
+        product: request.query.product_id,
+        results: Object.values(formatReviews)
+      }
+      response.send(responseObject);
+    })
     .catch(e => {console.error(e); response.send('Uh oh');})
 }
 
