@@ -2,7 +2,6 @@ const pool = require('../database/index.js');
 const models = require('../database/models.js');
 
 const getReviews = (request, response) => {
-  console.log(request.query);
   models.reviewsQuery(request.query.product_id)
     .then(data => {
       const formatReviews = data.rows.reduce((acc, { review_id, rating, summary, recommend, response, body, date, reviewer_name, helpfulness, photo_id, url }) => {
@@ -29,12 +28,16 @@ const getReviews = (request, response) => {
       }
       response.send(responseObject);
     })
-    .catch(e => {console.error(e); response.send('Uh oh');})
+    .catch(e => {console.error(e); response.send('Error retrieving data');})
 }
 
 const getMeta = (request, response) => {
-  console.log(request.query);
-  response.send('Get reviews meta');
+  models.metaQuery(request.query.product_id)
+    .then(data => {
+      console.log(data.rows);
+      response.send('Getting meta');
+    })
+    .catch(err => {console.error(err); response.send('Error retrieving data')})
 }
 
 const postReview = (request, response) => {
