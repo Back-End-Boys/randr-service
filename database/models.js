@@ -63,9 +63,9 @@ const formatMeta = (results) => (
 const reviewInsertCommand = ({ product_id, rating, summary, body, recommend, name, email }) => (
   `WITH new_review AS (
     INSERT INTO reviews (product_id, rating, summary, body, recommend, reviewer_name, reviewer_email)
-    VALUES (${product_id}, ${rating}, ${summary}, ${body}, ${recommend}, ${name}, ${email})
+    VALUES (${product_id}, ${rating}, '${summary}', '${body}', ${recommend}, '${name}', '${email}')
     RETURNING id
-  ),`
+  ), `
 )
 
 const photosInsertCommand = (photos) => {
@@ -79,9 +79,9 @@ const photosInsertCommand = (photos) => {
   if (statements.length === 0) {
     return '';
   } else if (statements.length === 1) {
-    return statements[0];
+    return statements[0] + ', ';
   } else {
-    return statements.join(', ')
+    return statements.join(', ') + ', ';
   }
 }
 
@@ -90,7 +90,7 @@ const characteristicsInsertCommand = (characteristics) => {
   let count = 0;
   for (var id in characteristics) {
     if (count === Object.keys(characteristics).length - 1) {
-      return statements.join(',') + ` INSERT INTO characteristic_reviews (review_id, characteristic_id, value) SELECT id, ${Number(id)}, ${characteristics[id]} FROM new_review`
+      return statements.join(', ') + ` INSERT INTO characteristic_reviews (review_id, characteristic_id, value) SELECT id, ${Number(id)}, ${characteristics[id]} FROM new_review;`
     } else {
       statements.push(`characteristic${id} AS (
         INSERT INTO characteristic_reviews (review_id, characteristic_id, value)
@@ -103,8 +103,7 @@ const characteristicsInsertCommand = (characteristics) => {
 
 const reviewsInsert = (review) => {
   var full = reviewInsertCommand(review) + photosInsertCommand(review.photos) + characteristicsInsertCommand(review.characteristics);
-  console.log(full);
-  // pool.query(full);
+  return pool.query(full)
 }
 
 module.exports = {

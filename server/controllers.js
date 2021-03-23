@@ -35,11 +35,11 @@ const getMeta = (request, response) => {
 
 const postReview = (request, response) => {
   models.reviewsInsert(request.body)
-    // .then(data => {
-    //   console.log(data);
-    //   response.send('Inserted');
-    // })
-    // .catch(err => {console.err(err); response.send('Error posting review')})
+    .then(data => {
+      console.log(data);
+      response.send('Inserted');
+    })
+    .catch(err => {console.error(err); response.send('Error posting review')})
 }
 
 const updateHelpfulness = (request, response) => {
