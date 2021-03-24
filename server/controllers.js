@@ -13,7 +13,10 @@ const getReviews = (request, response) => {
 
       response.send(responseReviews);
     })
-    .catch(e => {console.error(e); response.send('Error retrieving data');})
+    .catch(err => {
+      console.error(err);
+      response.send('Error retrieving data');
+    })
 }
 
 const getMeta = (request, response) => {
@@ -30,31 +33,49 @@ const getMeta = (request, response) => {
 
       response.send(responseMeta);
     })
-    .catch(err => {console.error(err); response.send('Error retrieving data')})
+    .catch(err => {
+      console.error(err);
+      response.send('Error retrieving data')
+    })
 }
 
 const postReview = (request, response) => {
   models.reviewsInsert(request.body)
     .then(data => {
-      console.log(data);
       response.send('Inserted');
     })
-    .catch(err => {console.error(err); response.send('Error posting review')})
+    .catch(err => {
+      console.error(err);
+      response.send('Error posting review')
+    })
 }
 
-const updateHelpfulness = (request, response) => {
-  console.log(request.params);
-  response.send('Update helpfulness');
+const putHelpfulness = (request, response) => {
+  models.updateHelpful(request.params.review_id)
+    .then(data => {
+      response.send('Updated');
+    })
+    .catch(err => {
+      console.error(err);
+      response.send('Error updating helpfulness');
+    })
 }
 
-const reportReview = (request, response) => {
-  console.log(request.params);
-  response.send('Report review');
+const putReview = (request, response) => {
+  models.reportReview(request.params.review_id)
+    .then(data => {
+      console.log(data);
+      response.send('Reported');
+    })
+    .catch(err => {
+      console.error(err);
+      response.send('Error reporting review');
+    })
 }
 
 
 module.exports.getReviews = getReviews;
 module.exports.getMeta = getMeta;
 module.exports.postReview = postReview;
-module.exports.updateHelpfulness = updateHelpfulness;
-module.exports.reportReview = reportReview;
+module.exports.putHelpfulness = putHelpfulness;
+module.exports.putReview = putReview;

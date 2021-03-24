@@ -11,9 +11,9 @@ app.get('/reviews/meta', controller.getMeta)
 
 app.post('/reviews', controller.postReview)
 
-app.put('/reviews/:review_id/helpful', controller.updateHelpfulness)
+app.put('/reviews/:review_id/helpful', controller.putHelpfulness)
 
-app.put('/reviews/:review_id/report', controller.reportReview)
+app.put('/reviews/:review_id/report', controller.putReview)
 
 app.listen(2525, () => {
   console.log('Listening at http://localhost:2525');
