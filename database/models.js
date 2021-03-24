@@ -7,7 +7,7 @@ const pool = require('../database/index.js');
   ---------------------------------------------*/ 
 
 const reviewsQuery = (product_id) => (
-  pool.query(`SELECT r.id AS review_id, r.rating, r.summary, r.recommend, r.response, r.body, r.date, r.reviewer_name, r.helpfulness, p.id AS photo_id, p.url FROM reviews AS r FULL OUTER JOIN reviews_photos AS p ON r.id = p.review_id WHERE r.product_id = ${product_id}`)
+  pool.query(`SELECT r.id AS review_id, r.rating, r.summary, r.recommend, r.response, r.body, r.date, r.reviewer_name, r.helpfulness, p.id AS photo_id, p.url FROM reviews AS r FULL OUTER JOIN reviews_photos AS p ON r.id = p.review_id WHERE r.product_id = ${product_id} AND r.reported = false`)
 )
 
 const formatReviews = (results) => (
@@ -128,11 +128,22 @@ const updateHelpful = (id) => (
   pool.query(`UPDATE reviews SET helpfulness = helpfulness + 1 WHERE id = ${id}`)
 )
 
+/*---------------------------------------------
+
+  REPORT REVIEW
+
+  ---------------------------------------------*/ 
+
+const reportReview = (id) => (
+  pool.query(`UPDATE reviews SET reported = TRUE WHERE id = ${id}`)
+)
+
 module.exports = {
   reviewsQuery,
   formatReviews,
   metaQuery,
   formatMeta,
   reviewsInsert,
-  updateHelpful
+  updateHelpful,
+  reportReview
 }

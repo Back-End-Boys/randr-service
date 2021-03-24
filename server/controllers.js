@@ -62,8 +62,15 @@ const putHelpfulness = (request, response) => {
 }
 
 const putReview = (request, response) => {
-  console.log(request.params);
-  response.send('Report review');
+  models.reportReview(request.params.review_id)
+    .then(data => {
+      console.log(data);
+      response.send('Reported');
+    })
+    .catch(err => {
+      console.error(err);
+      response.send('Error reporting review');
+    })
 }
 
 
